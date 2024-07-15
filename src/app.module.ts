@@ -1,4 +1,3 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import firebaseConfig from './config/firebase.config';
@@ -8,8 +7,8 @@ import { UsersModule } from './ users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [firebaseConfig],
       isGlobal: true,
+      load: [firebaseConfig],
     }),
     AuthModule,
     UsersModule,
