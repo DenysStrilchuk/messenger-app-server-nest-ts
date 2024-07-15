@@ -3,9 +3,10 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 import * as process from 'process';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../environments/.env') });
 
 interface FirebaseConfig {
   type: string;
@@ -22,6 +23,8 @@ interface FirebaseConfig {
 }
 
 async function bootstrap() {
+  console.log('Environment Variables:', process.env);
+
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
 
