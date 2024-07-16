@@ -23,8 +23,6 @@ interface FirebaseConfig {
 }
 
 async function bootstrap() {
-  console.log('Environment Variables:', process.env);
-
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
 
@@ -45,6 +43,10 @@ async function bootstrap() {
       privateKey: firebaseConfig.private_key,
     }),
     databaseURL: firebaseConfig.databaseURL,
+  });
+
+  app.enableCors({
+    origin: 'http://localhost:3001',
   });
 
   await app.listen(3000);

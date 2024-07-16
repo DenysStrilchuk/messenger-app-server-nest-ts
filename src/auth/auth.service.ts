@@ -20,7 +20,11 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<string> {
     const user = await admin.auth().getUserByEmail(email);
-    const userDoc = await admin.firestore().collection('users').doc(user.uid).get();
+    const userDoc = await admin
+      .firestore()
+      .collection('users')
+      .doc(user.uid)
+      .get();
     const userData = userDoc.data();
 
     if (!userData || !userData.password) {
