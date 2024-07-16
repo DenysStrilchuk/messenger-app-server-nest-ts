@@ -1,24 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { UserRecord } from 'firebase-admin/lib/auth';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  async register(email: string, password: string): Promise<any> {
+  async register(email: string, password: string): Promise<UserRecord> {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const userRecord = await admin.auth().createUser({
       email,
-      password,
+      password: hashedPassword,
     });
     await admin.firestore().collection('users').doc(userRecord.uid).set({
       email,
+      password: hashedPassword,
     });
-    return { uid: userRecord.uid };
+    return userRecord;
   }
-  async login(token: string): Promise<any> {
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      return { uid: decodedToken.uid };
-    } catch (error) {
-      throw new Error('Invalid token');
+
+  async login(email: string, password: string): Promise<string> {
+    const user = await admin.auth().getUserByEmail(email);
+    const userDoc = await admin.firestore().collection('users').doc(user.uid).get();
+    const userData = userDoc.data();
+
+    if (!userData || !userData.password) {
+      throw new Error('User not found or password is missing');
     }
+
+    const isPasswordValid = await bcrypt.compare(password, userData.password);
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials');
+    }
+
+    return await admin.auth().createCustomToken(user.uid);
   }
 }
