@@ -3,6 +3,11 @@ import * as admin from 'firebase-admin';
 
 @Injectable()
 export class UsersService {
+  async getAllUsers(): Promise<any[]> {
+    const usersSnapshot = await admin.firestore().collection('users').get();
+    return usersSnapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() }));
+  }
+
   async getUser(uid: string): Promise<any> {
     return await admin.auth().getUser(uid);
   }
