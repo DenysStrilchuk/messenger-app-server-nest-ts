@@ -4,7 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import * as process from 'process';
+import { ValidationPipe } from '@nestjs/common';
+import { FirebaseAuthGuard } from './guards/firebase-auth.guard'; // Импортируйте guard
 
 dotenv.config({ path: path.resolve(__dirname, '../environments/.env') });
 
@@ -26,10 +27,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
 
-  console.log('FIREBASE_PROJECT_ID:', process.env.FIREBASE_PROJECT_ID);
-  console.log('FIREBASE_PRIVATE_KEY:', process.env.FIREBASE_PRIVATE_KEY);
-  console.log('FIREBASE_CLIENT_EMAIL:', process.env.FIREBASE_CLIENT_EMAIL);
-
   const firebaseConfig = configService.get<FirebaseConfig>('firebase');
 
   if (!firebaseConfig) {
@@ -45,9 +42,8 @@ async function bootstrap() {
     databaseURL: firebaseConfig.databaseURL,
   });
 
-  app.enableCors({
-    origin: 'http://localhost:3001',
-  });
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalGuards(new FirebaseAuthGuard());
 
   await app.listen(3000);
 }
