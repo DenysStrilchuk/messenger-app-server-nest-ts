@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { ValidationPipe } from '@nestjs/common';
-import { FirebaseAuthGuard } from './guards/firebase-auth.guard'; // Импортируйте guard
+import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 
 dotenv.config({ path: path.resolve(__dirname, '../environments/.env') });
 
