@@ -1,3 +1,4 @@
+// firebase-auth.guard.ts
 import {
   CanActivate,
   ExecutionContext,
@@ -10,11 +11,13 @@ import * as admin from 'firebase-admin';
 export class FirebaseAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split('Bearer ')[1];
+    const authorization = request.headers['authorization'];
 
-    if (!token) {
-      throw new UnauthorizedException('Token not found');
+    if (!authorization) {
+      throw new UnauthorizedException('Authorization header is missing');
     }
+
+    const token = authorization.split(' ')[1];
 
     try {
       const decodedToken = await admin.auth().verifyIdToken(token);

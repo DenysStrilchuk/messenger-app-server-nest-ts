@@ -5,7 +5,6 @@ import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { ValidationPipe } from '@nestjs/common';
-import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 
 dotenv.config({ path: path.resolve(__dirname, '../environments/.env') });
 
@@ -43,7 +42,12 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalGuards(new FirebaseAuthGuard());
+
+  // CORS настройки
+  app.enableCors({
+    origin: 'http://localhost:3001', // разрешите ваш клиентский URL
+    credentials: true,
+  });
 
   await app.listen(3000);
 }

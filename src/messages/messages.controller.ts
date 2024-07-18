@@ -6,13 +6,16 @@ import {
   Query,
   Delete,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
+import { FirebaseAuthGuard } from '../guards/firebase-auth.guard';
 
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
+  @UseGuards(FirebaseAuthGuard)
   @Post()
   async sendMessage(
     @Body()
@@ -31,6 +34,7 @@ export class MessagesController {
     );
   }
 
+  @UseGuards(FirebaseAuthGuard)
   @Get()
   async getMessages(
     @Query('senderId') senderId: string,
@@ -39,6 +43,7 @@ export class MessagesController {
     return this.messagesService.getMessages(senderId, receiverId);
   }
 
+  @UseGuards(FirebaseAuthGuard)
   @Delete(':id')
   async deleteMessage(@Param('id') id: string) {
     await this.messagesService.deleteMessage(id);
