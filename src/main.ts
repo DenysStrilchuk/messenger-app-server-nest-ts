@@ -43,9 +43,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // CORS настройки
   app.enableCors({
-    origin: 'http://localhost:3001', // разрешите ваш клиентский URL
+    origin: 'http://localhost:3001',
     credentials: true,
   });
 

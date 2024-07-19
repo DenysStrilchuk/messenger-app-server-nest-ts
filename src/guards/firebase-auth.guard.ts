@@ -1,4 +1,3 @@
-// firebase-auth.guard.ts
 import {
   CanActivate,
   ExecutionContext,
@@ -20,8 +19,7 @@ export class FirebaseAuthGuard implements CanActivate {
     const token = authorization.split(' ')[1];
 
     try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      request.user = decodedToken;
+      request.user = await admin.auth().verifyIdToken(token);
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
